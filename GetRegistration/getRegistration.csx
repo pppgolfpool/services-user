@@ -48,7 +48,10 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         jProfile["UserId"] = profile.RowKey;
         jProfile["Name"] = profile.Name;
         jProfile["Email"] = profile.Email;
-        list.Add(jProfile);
+        var nameSplit = profile.Name.Split(new[] { ' ' });
+        jProfile["LastFirst"] = nameSplit.Last() + ", " + nameSplit.First();
+        if(jProfile["isTest"] == null)
+            list.Add(jProfile);
     }
 
     var picksUrl = "PicksUrl".GetEnvVar();
@@ -65,14 +68,14 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         picksList.Add((JObject)item);
     }
 
-    foreach (var profile in profiles)
+    foreach (var profile in list)
     {
-        var pick = picksList.SingleOrDefault(x => (string)x["UserId"] == profile.RowKey);
+        var pick = picksList.SingleOrDefault(x => (string)x["UserId"] == (string)profile["UserId"]);
         if (pick != null)
-            profile.Picked = true;
+            profile["Picked"] = true;
     }
 
-    return req.CreateOk(profiles);
+    return req.CreateOk(list);
 }
 
 public class ProfileEntity : TableEntity
