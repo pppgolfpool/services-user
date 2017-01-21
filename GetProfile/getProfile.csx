@@ -48,6 +48,8 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         jProfile["UserId"] = profileEntity.RowKey;
         jProfile["Name"] = profileEntity.Name;
         jProfile["Email"] = profileEntity.Email;
+        var nameSplit = profileEntity.Name.Split(new[] { ' ' });
+        jProfile["LastFirst"] = nameSplit.Last() + ", " + nameSplit.First();
         return req.CreateOk(jProfile);
     }
 
@@ -63,6 +65,8 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         jProfile["UserId"] = profile.RowKey;
         jProfile["Name"] = profile.Name;
         jProfile["Email"] = profile.Email;
+        var nameSplit = profile.Name.Split(new[] { ' ' });
+        jProfile["LastFirst"] = nameSplit.Last() + ", " + nameSplit.First();
         return req.CreateOk(jProfile);
     }
 
@@ -78,6 +82,8 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
         jProfile["UserId"] = profile.RowKey;
         jProfile["Name"] = profile.Name;
         jProfile["Email"] = profile.Email;
+        var nameSplit = profile.Name.Split(new[] { ' ' });
+        jProfile["LastFirst"] = nameSplit.Last() + ", " + nameSplit.First();
         return req.CreateOk(jProfile);
     }
 
@@ -95,9 +101,11 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
             jProfile["UserId"] = profile.RowKey;
             jProfile["Name"] = profile.Name;
             jProfile["Email"] = profile.Email;
+            var nameSplit = profile.Name.Split(new[] { ' ' });
+            jProfile["LastFirst"] = nameSplit.Last() + ", " + nameSplit.First();
             list.Add(jProfile);
         }
-        return req.CreateOk(list);
+        return req.CreateOk(list.OrderBy(x => (string)x["LastFirst"]));
     }
 
     return req.CreateError(HttpStatusCode.BadRequest);
